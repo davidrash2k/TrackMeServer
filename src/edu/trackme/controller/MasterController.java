@@ -78,14 +78,14 @@ public class MasterController {
 	    	iTrackeeID = Integer.parseInt(sTrackeeID);
 	    	
 	    	
-	    		sQuery = "SELECT track_mode, track_interval FROM user WHERE id = ?";
+	    		sQuery = "SELECT track_mode FROM user WHERE id = ?";
 	    	   try{
 		             ps = con.getConnection().prepareStatement(sQuery);
 		             ps.setInt(1, iTrackeeID);
 		             rs = ps.executeQuery();
 		             
 		             while(rs.next()){
-		            	 trackMode = rs.getString(1) + " " + rs.getString(2);
+		            	 trackMode = rs.getString(1);
 		             }
 		            
 		         }catch(SQLException e){
@@ -103,7 +103,37 @@ public class MasterController {
 	    
 	    
 	    //RETRIEVE Trackee track interval
-	    
+	    public String getTrackeeTrackInterval(String sTrackeeID){
+	    	String trackInterval = "", sQuery;
+	    	ResultSet rs;
+	    	PreparedStatement ps;
+	    	Integer iTrackeeID;
+	    	
+	    	iTrackeeID = Integer.parseInt(sTrackeeID);
+	    	
+	    	
+	    		sQuery = "SELECT track_interval FROM user WHERE id = ?";
+	    	   try{
+		             ps = con.getConnection().prepareStatement(sQuery);
+		             ps.setInt(1, iTrackeeID);
+		             rs = ps.executeQuery();
+		             
+		             while(rs.next()){
+		            	 trackInterval = String.valueOf(rs.getInt(1));
+		             }
+		            
+		         }catch(SQLException e){
+		             e.printStackTrace();
+		         }finally{
+		        	 con.closeCon();
+		         }
+		    	
+	    	
+	    	
+	    	
+
+	    	return trackInterval;
+	    }
 	    
 
 	    //RETRIEVE Trackee location 
@@ -283,8 +313,7 @@ public class MasterController {
 	    //DELETE
 	    
 	    
-	    
-	    
+
 	    
 	    //HELPER
 	    
