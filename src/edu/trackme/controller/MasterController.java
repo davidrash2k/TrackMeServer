@@ -23,10 +23,59 @@ public class MasterController {
 	
 		    
 	    
-	    //UPDATE track mode and interval (if applicable)
+
 	    
 	    
 	    //UPDATE 
+	    //Update Track Mode
+	    public String updateUserTrackMode(String sUserID, String trackMode){
+	    	String sQuery = "UPDATE user SET track_mode = ? WHERE id = ?";
+	    	PreparedStatement ps;
+	    	String mode = "";
+	    	
+	        try{
+	       	 
+	             ps = con.getConnection().prepareStatement(sQuery);
+	             ps.setString(1, trackMode);
+	             ps.setInt(2, Integer.parseInt(sUserID));
+	             ps.executeUpdate();
+	           
+	         }catch(SQLException e){
+	             e.printStackTrace();
+	        
+	         }finally{
+	        	 con.closeCon();
+	         }
+	        
+	        
+	        sQuery = "SELECT track_mode FROM user WHERE id = ?";
+	        ResultSet rs;
+	        
+	        try{
+		       	 
+	             ps = con.getConnection().prepareStatement(sQuery);
+	             ps.setInt(1, Integer.parseInt(sUserID));
+	             rs = ps.executeQuery();
+	             
+	             
+	             while(rs.next()){
+	            	 mode = rs.getString(1);
+	             }
+	             
+	           
+	         }catch(SQLException e){
+	             e.printStackTrace();
+	        
+	         }finally{
+	        	 con.closeCon();
+	         }
+	        
+	    	
+	    	return mode;
+	    }
+	    
+	    
+	    //UPDATE track mode and interval (if applicable)
 	    
 	    //UPDATE User location
 	    public void updateUserLocation(String sUserID, String sLatitude, String sLongtitude){
@@ -53,7 +102,7 @@ public class MasterController {
 	           
 	         }catch(SQLException e){
 	             e.printStackTrace();
-	             System.out.println("Userd ID: " + sUserID + " failed to update location @ latitude and longtitude (" + sLatitude + "," + sLongtitude);
+	             System.out.println("Userd ID: " + sUserID + " failed to update location     latitude and longtitude (" + sLatitude + "," + sLongtitude);
 	         }finally{
 	        	 con.closeCon();
 	         }
@@ -227,8 +276,8 @@ public class MasterController {
 	             
 	             while(rs.next()){
 	            	 userDetails = String.valueOf(rs.getInt(1)) + " " + rs.getString(2) + " " + rs.getString(3) + " " +
-	             rs.getString(4) + " " + rs.getString(5) + " " + rs.getString(6) + " " + String.valueOf(rs.getDouble(7)) + " " + String.valueOf(rs.getDouble(8)) + " "
-	             + rs.getString(9) + " " + String.valueOf(rs.getInt(10) + " " + rs.getString(10));
+	             rs.getString(4) +  " " + rs.getString(6) + " " + String.valueOf(rs.getDouble(7)) + " " + String.valueOf(rs.getDouble(8)) + " "
+	             + rs.getString(9) + " " + String.valueOf(rs.getInt(10)) + " " + rs.getString(11);
 	             }
 	            
 	         }catch(SQLException e){
@@ -287,7 +336,7 @@ public class MasterController {
 	    	 int registrationSuccess = 1;
 	    	 PreparedStatement ps;
 	         String sQuery = "INSERT INTO user (id,name, mobileNumber,email,password, code, latitude, longtitude, track_mode, track_interval, status)" +
-	        		 		"VALUES (null, ?, ?,?, ?, ?, null, null, null, null, ?);";
+	        		 		"VALUES (null, ?, ?,?, ?, ?, ?, ? ?, ?, ?);";
 	        
 	         
 	         try{
@@ -297,7 +346,11 @@ public class MasterController {
 	             ps.setString(3, email);
 	             ps.setString(4, password);
 	             ps.setString(5, userCode);
-	             ps.setString(6, "Not Travelling");
+	             ps.setDouble(6, 0.0);
+	             ps.setDouble(7, 0.0);
+	             ps.setString(8, "Pulse");
+	             ps.setInt(9, 300);
+	             ps.setString(10, "Not Travelling");
 	             ps.executeUpdate();
 	         }catch(SQLException e){
 	             e.printStackTrace();
@@ -329,6 +382,7 @@ public class MasterController {
 	         String sQuery = "SELECT email FROM user WHERE email = ? AND password = ?";
 	         String sQuery2 = "SELECT * FROM user WHERE email = ? AND password = ?";
 	         String userDetails = null;
+	         String name = "", status = "";
 	         
 	         try{
 	 
@@ -355,13 +409,19 @@ public class MasterController {
 	        		 ps.setString(2, password);
 	        		 rs = ps.executeQuery();
 	        		 
-	        		 rs.next();
+	        		 while(rs.next()){
 	        		 
-	        		 userDetails = String.valueOf(rs.getInt(1)) + " " + rs.getString(2) + " " + rs.getString(3) + " " +
-	        	             rs.getString(4) + " " + rs.getString(5) + " " + rs.getString(6) + " " + String.valueOf(rs.getDouble(7)) + " " + String.valueOf(rs.getDouble(8)) + " "
-	        	             + rs.getString(9) + " " + String.valueOf(rs.getInt(10) + " " + rs.getString(10));
+	        		 name = rs.getString(2);
+	        		 name = name.replace(" ", "1");
+	        		 status = rs.getString(11);
+	        		 status = status.replace(" ", "1");
+	        		
+	        			 
+	        		 userDetails = String.valueOf(rs.getInt(1)) + " " + name + " " + rs.getString(3) + " " +
+	        	             rs.getString(4) + " " + rs.getString(6) + " " + String.valueOf(rs.getDouble(7)) + " " + String.valueOf(rs.getDouble(8)) + " "
+	        	             + rs.getString(9) + " " + String.valueOf(rs.getInt(10)) + " " + status;
 	        	             
-	        		 
+	        		 }
 	        		 
 	        	 }catch(SQLException e){
 		             e.printStackTrace();
@@ -370,7 +430,7 @@ public class MasterController {
 		         }
 	         }
 	    	
-
+	   
 	    	return String.valueOf(isValid) + " " + userDetails;
 	    }
 	    

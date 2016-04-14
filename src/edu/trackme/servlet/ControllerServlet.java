@@ -44,6 +44,7 @@ public class ControllerServlet extends HttpServlet {
 		switch(servletName){
 			case "login": 	String email = request.getParameter("email");
 							String password = request.getParameter("password");
+							System.out.println("RETURN OUTPUT: " + controller.authenticateUserForLogin(email, password));
 							response.getWriter().write(controller.authenticateUserForLogin(email, password));
 							break;
 					
@@ -51,14 +52,18 @@ public class ControllerServlet extends HttpServlet {
 							successfullyRegistered = controller.registerUser(request.getParameter("name"), request.getParameter("mobileNumber"), request.getParameter("email"), request.getParameter("password"));
 							response.getWriter().write(Integer.toString(successfullyRegistered));
 							System.out.println("INTEGER: " + Integer.toString(successfullyRegistered));
-					break;
+							break;
 			
 			case "trackUser":int successfullyTrackedUser;
 							 successfullyTrackedUser = controller.trackUser(request.getParameter("code"), request.getParameter("trackerID"));
 							 response.getWriter().write(Integer.toString(successfullyTrackedUser));
-					break;
+							 break;
 					
-			case "getUserDetails" : controller.getUserDetails(request.getParameter("email"),request.getParameter("password"));
+			case "getUserDetails" : response.getWriter().write(controller.getUserDetails(request.getParameter("email"),request.getParameter("password"))); 
+							break;
+			
+			case "updateTrackMode": response.getWriter().write(controller.updateUserTrackMode(request.getParameter("id"), request.getParameter("track_mode")));
+							break;
 					
 			default:break;
 		}
