@@ -20,6 +20,14 @@ public class MasterController {
 	    
 	    
 		
+	
+		    
+	    
+	    //UPDATE track mode and interval (if applicable)
+	    
+	    
+	    //UPDATE 
+	    
 	    //UPDATE User location
 	    public void updateUserLocation(String sUserID, String sLatitude, String sLongtitude){
 	    	Double dLatitude, dLongtitude;
@@ -54,12 +62,56 @@ public class MasterController {
 	    	
 	    }
 	    
+	    
+	    
+	    //RETRIEVE
+	    
+	    
+	    
+	    //RETRIEVE Trackee track mode
+	    public String getTrackeeTrackMode(String sTrackeeID){
+	    	String trackMode = "", sQuery;
+	    	ResultSet rs;
+	    	PreparedStatement ps;
+	    	Integer iTrackeeID;
+	    	
+	    	iTrackeeID = Integer.parseInt(sTrackeeID);
+	    	
+	    	
+	    		sQuery = "SELECT track_mode, track_interval FROM user WHERE id = ?";
+	    	   try{
+		             ps = con.getConnection().prepareStatement(sQuery);
+		             ps.setInt(1, iTrackeeID);
+		             rs = ps.executeQuery();
+		             
+		             while(rs.next()){
+		            	 trackMode = rs.getString(1) + " " + rs.getString(2);
+		             }
+		            
+		         }catch(SQLException e){
+		             e.printStackTrace();
+		         }finally{
+		        	 con.closeCon();
+		         }
+		    	
+	    	
+	    	
+	    	
+
+	    	return trackMode;
+	    }
+	    
+	    
+	    //RETRIEVE Trackee track interval
+	    
+	    
+
 	    //RETRIEVE Trackee location 
 	    public String getTrackeeLocation(String sTrackerID, String sTrackeeID){
 	    		Boolean isValid = false;
 	    		Integer iTrackerID, iTrackeeID;
 	    		PreparedStatement ps;
-	    		String sQuery, location;
+	    		String sQuery, location = "";
 	    		ResultSet rs;
 	    		
 	    		iTrackerID = Integer.parseInt(sTrackerID);
@@ -88,30 +140,12 @@ public class MasterController {
 	    	        	 con.closeCon();
 	    	         }
 	    		}else{
-	    			
+	    			location = "ERROR Your trackee is no longer allowing you to track him/her.";
 	    		}
 	    		
-	    		
-	    		
-	    		
-	    	
-	    	return "";
+	   
+	    	return location;
 	    }
-	    
-	 
-	    
-	    
-	    //RETRIEVE Trackee track mode and track interval (if applicable)
-	    
-	    
-	    //UPDATE track mode and interval (if applicable)
-	    
-	    
-	    //UPDATE 
-	    
-	    
-	    
-	    //RETRIEVE
 	    
 	    
 	    //Retrieve id of the owner of the code
@@ -244,11 +278,12 @@ public class MasterController {
 	    
 	    
 	    
-	    //UPDATE
-	    
-	    
+
 	    
 	    //DELETE
+	    
+	    
+	    
 	    
 	    
 	    //HELPER
@@ -340,6 +375,29 @@ public class MasterController {
 	    //Check Tracker tracking access towards a trackee
 	    public boolean checkTrackTrackeeTrackingValidility(Integer iTrackerID, Integer iTrackeeID){
 	    	Boolean isValid = false;
+	    	PreparedStatement ps;
+	    	ResultSet rs;
+	    	String sQuery, sResult = "";
+	    	
+	         try{
+		         sQuery = "SELECT trackstatus FROM trackers WHERE trackerId = ? AND trackeeId = ?";
+	             ps = con.getConnection().prepareStatement(sQuery);
+	             ps.setInt(1, iTrackerID);
+	             ps.setInt(2, iTrackeeID);
+	             rs = ps.executeQuery();
+	         
+	             while(rs.next()){
+	            	sResult = rs.getString(1); 
+	             }
+	         }catch(SQLException e){
+	             e.printStackTrace();
+	         }finally{
+	        	 con.closeCon();
+	         }
+	    	
+	         if(sResult == "active")
+	        	 isValid = true;
+	         
 	    	
 	    	return isValid;
 	    }
