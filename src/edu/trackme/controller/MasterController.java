@@ -66,6 +66,8 @@ public class MasterController {
 	    
 	    //RETRIEVE
 	    
+	    //GET ALL USERS (convert to gson)
+	    
 	    
 	    
 	    //RETRIEVE Trackee track mode
@@ -226,7 +228,7 @@ public class MasterController {
 	             while(rs.next()){
 	            	 userDetails = String.valueOf(rs.getInt(1)) + " " + rs.getString(2) + " " + rs.getString(3) + " " +
 	             rs.getString(4) + " " + rs.getString(5) + " " + rs.getString(6) + " " + String.valueOf(rs.getDouble(7)) + " " + String.valueOf(rs.getDouble(8)) + " "
-	             + rs.getString(9) + " " + String.valueOf(rs.getInt(10));
+	             + rs.getString(9) + " " + String.valueOf(rs.getInt(10) + " " + rs.getString(10));
 	             }
 	            
 	         }catch(SQLException e){
@@ -284,8 +286,8 @@ public class MasterController {
 	    	 String userCode = new UserCodeGeneration().generateCode();
 	    	 int registrationSuccess = 1;
 	    	 PreparedStatement ps;
-	         String sQuery = "INSERT INTO user (id,name, mobileNumber,email,password, code, location)" +
-	        		 		"VALUES (null, ?, ?,?, ?, ?, null);";
+	         String sQuery = "INSERT INTO user (id,name, mobileNumber,email,password, code, latitude, longtitude, track_mode, track_interval, status)" +
+	        		 		"VALUES (null, ?, ?,?, ?, ?, null, null, null, null, ?);";
 	        
 	         
 	         try{
@@ -295,6 +297,7 @@ public class MasterController {
 	             ps.setString(3, email);
 	             ps.setString(4, password);
 	             ps.setString(5, userCode);
+	             ps.setString(6, "Not Travelling");
 	             ps.executeUpdate();
 	         }catch(SQLException e){
 	             e.printStackTrace();
@@ -324,7 +327,7 @@ public class MasterController {
 	    	 PreparedStatement ps;
 	         ResultSet rs;
 	         String sQuery = "SELECT email FROM user WHERE email = ? AND password = ?";
-	         String sQuery2 = "SELECT id, name, mobileNumber, email, code, location FROM user WHERE email = ? AND password = ?";
+	         String sQuery2 = "SELECT * FROM user WHERE email = ? AND password = ?";
 	         String userDetails = null;
 	         
 	         try{
@@ -354,7 +357,10 @@ public class MasterController {
 	        		 
 	        		 rs.next();
 	        		 
-	        		 userDetails = rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getString(5) + " " + rs.getString(6); 
+	        		 userDetails = String.valueOf(rs.getInt(1)) + " " + rs.getString(2) + " " + rs.getString(3) + " " +
+	        	             rs.getString(4) + " " + rs.getString(5) + " " + rs.getString(6) + " " + String.valueOf(rs.getDouble(7)) + " " + String.valueOf(rs.getDouble(8)) + " "
+	        	             + rs.getString(9) + " " + String.valueOf(rs.getInt(10) + " " + rs.getString(10));
+	        	             
 	        		 
 	        		 
 	        	 }catch(SQLException e){
