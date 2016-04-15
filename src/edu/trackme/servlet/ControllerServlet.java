@@ -70,16 +70,22 @@ public class ControllerServlet extends HttpServlet {
 			case "updateUserArrived": controller.updateStatusArrived(request.getParameter("id"), request.getParameter("status"));
 			
 			case "getTrackRequestList":	Gson g = new Gson();
-										String trackRequestList = g.toJson(controller.getTrackRequestList(request.getParameter("id"))); 
-										response.getWriter().write(trackRequestList); break;
+										String trackRequestList = g.toJson(controller.getTrackRequestList(request.getParameter("id")));
+										System.out.println(trackRequestList);
+										response.getWriter().write(trackRequestList); 
+										break;
 			
 			case "getTrackeeList": 		Gson g2 = new Gson();
 										String trackeeList = g2.toJson(controller.getTrackeeList(request.getParameter("id"))); 
 										response.getWriter().write(trackeeList); break;
 										
-			case "updateUserLocation" : controller.updateUserLocation(request.getParameter("id"), request.getParameter("latitude"), request.getParameter("longtitude"));
+			case "updateUserLocation" : controller.updateUserLocation(request.getParameter("id"), request.getParameter("latitude"), request.getParameter("longitude"));
 			
 			case "getUserLocation"	: response.getWriter().write(controller.getUserLocation(request.getParameter("id")));
+			
+			case "acceptTracker": controller.acceptTracker(request.getParameter("trackeeID"), request.getParameter("trackerID"));
+				
+			case "declineTracker":
 											
 					
 			default:break;

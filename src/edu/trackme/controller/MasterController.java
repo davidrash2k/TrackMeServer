@@ -31,12 +31,32 @@ public class MasterController {
 	    //UPDATE 
 	    
 	    
+	    //accept tracker
+	    public void acceptTracker(String trackeeID, String trackerID){
+	    	String sQuery = "UPDATE user SET status = ? WHERE id = ?";
+	    	PreparedStatement ps;
+	    	
+	        try{
+	       	 
+	             ps = con.getConnection().prepareStatement(sQuery);
+	             ps.setString(1, status);
+	             ps.setInt(2, Integer.parseInt(sUserID));
+	             ps.executeUpdate();
+	           
+	         }catch(SQLException e){
+	             e.printStackTrace();
+	        
+	         }finally{
+	        	 con.closeCon();
+	         }
+	    	
+	    }
 	    
-	    //Update Track Mode
+	    
+	    //Update Status
 	    public void updateStatusArrived(String sUserID, String status){
 	    	String sQuery = "UPDATE user SET status = ? WHERE id = ?";
 	    	PreparedStatement ps;
-	    	String mode = "";
 	    	
 	        try{
 	       	 
