@@ -33,14 +33,15 @@ public class MasterController {
 	    
 	    //accept tracker
 	    public void acceptTracker(String trackeeID, String trackerID){
-	    	String sQuery = "UPDATE user SET status = ? WHERE id = ?";
+	    	String sQuery = "UPDATE tracker SET status = ? WHERE trackerId = ? AND trackeeId = ?";
 	    	PreparedStatement ps;
 	    	
 	        try{
 	       	 
 	             ps = con.getConnection().prepareStatement(sQuery);
-	             ps.setString(1, status);
-	             ps.setInt(2, Integer.parseInt(sUserID));
+	             ps.setString(1, "Active");
+	             ps.setInt(2, Integer.parseInt(trackerID));
+	             ps.setInt(3, Integer.parseInt(trackeeID));
 	             ps.executeUpdate();
 	           
 	         }catch(SQLException e){
@@ -255,7 +256,7 @@ public class MasterController {
 	    	iTrackeeID = Integer.parseInt(sUserID);
 	    	
 	    	
-	    	sQuery = "SELECT id, name FROM user WHERE id IN("
+	    	sQuery = "SELECT id, name, email FROM user WHERE id IN("
 	    			 + "SELECT trackeeId FROM trackers WHERE trackerId = ? AND trackstatus = 'pending')";
 	    	   try{
 		             ps = con.getConnection().prepareStatement(sQuery);
@@ -263,7 +264,7 @@ public class MasterController {
 		             rs = ps.executeQuery();
 		             
 		             while(rs.next()){
-		            	 nameList.add(new User(rs.getInt(1), rs.getString(2)));
+		            	 nameList.add(new User(rs.getInt(1), rs.getString(2), rs.getString(3)));
 		             }
 		            
 		             
@@ -499,7 +500,7 @@ public class MasterController {
 	    	 int registrationSuccess = 1;
 	    	 PreparedStatement ps;
 	         String sQuery = "INSERT INTO user (id,name, mobileNumber,email,password, code, latitude, longtitude, track_mode, track_interval, status)" +
-	        		 		"VALUES (null, ?, ?,?, ?, ?, ?, ? ?, ?, ?);";
+	        		 		"VALUES (null, ?, ?,?, ?, ?, ?, ?, ?, ?, ?);";
 	        
 	         
 	         try{
@@ -508,7 +509,7 @@ public class MasterController {
 	             ps.setString(2, mobileNumber);
 	             ps.setString(3, email);
 	             ps.setString(4, password);
-	             ps.setString(5, userCode);
+	             ps.setInt(5, Integer.parseInt(userCode));
 	             ps.setDouble(6, 0.0);
 	             ps.setDouble(7, 0.0);
 	             ps.setString(8, "Pulse");
