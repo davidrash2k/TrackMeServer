@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import edu.trackme.controller.MasterController;
 
 /**
@@ -64,6 +66,21 @@ public class ControllerServlet extends HttpServlet {
 			
 			case "updateTrackMode": response.getWriter().write(controller.updateUserTrackMode(request.getParameter("id"), request.getParameter("track_mode")));
 							break;
+			
+			case "updateUserArrived": controller.updateStatusArrived(request.getParameter("id"), request.getParameter("status"));
+			
+			case "getTrackRequestList":	Gson g = new Gson();
+										String trackRequestList = g.toJson(controller.getTrackRequestList(request.getParameter("id"))); 
+										response.getWriter().write(trackRequestList); break;
+			
+			case "getTrackeeList": 		Gson g2 = new Gson();
+										String trackeeList = g2.toJson(controller.getTrackeeList(request.getParameter("id"))); 
+										response.getWriter().write(trackeeList); break;
+										
+			case "updateUserLocation" : controller.updateUserLocation(request.getParameter("id"), request.getParameter("latitude"), request.getParameter("longtitude"));
+			
+			case "getUserLocation"	: response.getWriter().write(controller.getUserLocation(request.getParameter("id")));
+											
 					
 			default:break;
 		}

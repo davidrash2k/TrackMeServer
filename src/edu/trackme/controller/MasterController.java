@@ -2,17 +2,19 @@ package edu.trackme.controller;
 
 
 import edu.trackme.db.DBConnection;
+import edu.trackme.model.User;
 	import java.sql.PreparedStatement;
 	import java.sql.ResultSet;
 	import java.sql.SQLException;
-	
+import java.util.ArrayList;
+
 import edu.trackme.util.UserCodeGeneration;
 
 
 
 public class MasterController {
 	    
-	    private DBConnection con;
+	    public DBConnection con;
 	    
 	    public MasterController(){
 	        con = new DBConnection();
@@ -27,6 +29,41 @@ public class MasterController {
 	    
 	    
 	    //UPDATE 
+	    
+	    
+	    
+	    //Update Track Mode
+	    public void updateStatusArrived(String sUserID, String status){
+	    	String sQuery = "UPDATE user SET status = ? WHERE id = ?";
+	    	PreparedStatement ps;
+	    	String mode = "";
+	    	
+	        try{
+	       	 
+	             ps = con.getConnection().prepareStatement(sQuery);
+	             ps.setString(1, status);
+	             ps.setInt(2, Integer.parseInt(sUserID));
+	             ps.executeUpdate();
+	           
+	         }catch(SQLException e){
+	             e.printStackTrace();
+	        
+	         }finally{
+	        	 con.closeCon();
+	         }
+	        
+	    }
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	    //Update Track Mode
 	    public String updateUserTrackMode(String sUserID, String trackMode){
 	    	String sQuery = "UPDATE user SET track_mode = ? WHERE id = ?";
@@ -116,6 +153,112 @@ public class MasterController {
 	    //RETRIEVE
 	    
 	    //GET ALL USERS (convert to gson)
+	    
+	    
+	    //Get User Location
+	    public String getUserLocation(String sUserID){
+	    	String location = "", sQuery;
+	    	ResultSet rs;
+	    	PreparedStatement ps;
+	    	Integer iTrackeeID;
+	    	
+	    	iTrackeeID = Integer.parseInt(sUserID);
+	    	
+	    	
+	    	sQuery = "SELECT latitude, longtitude FROM user WHERE id = ?";
+	    	   try{
+		             ps = con.getConnection().prepareStatement(sQuery);
+		             ps.setInt(1, iTrackeeID);
+		             rs = ps.executeQuery();
+		             
+		             while(rs.next()){
+		            	location = String.valueOf(rs.getDouble(1)) + " " + String.valueOf(rs.getDouble(2));
+		             }
+		            
+		             
+		         }catch(SQLException e){
+		             e.printStackTrace();
+		         }finally{
+		        	 con.closeCon();
+		         }
+		    	
+	    	
+	    	
+	    	
+	    	return location;
+	    }
+	    
+	    
+	    //Retrieve Track Request List
+	    //user is trackee
+	    public ArrayList<User> getTrackRequestList(String sUserID){
+	    	ArrayList<User> nameList = new ArrayList<User>();
+	    	String result = "", sQuery;
+	    	ResultSet rs;
+	    	PreparedStatement ps;
+	    	Integer iTrackeeID;
+	    	
+	    	iTrackeeID = Integer.parseInt(sUserID);
+	    	
+	    	
+	    	sQuery = "SELECT id, name FROM user WHERE id IN("
+	    			 + "SELECT trackerId FROM trackers WHERE trackeeId = ? AND trackstatus = 'pending')";
+	    	   try{
+		             ps = con.getConnection().prepareStatement(sQuery);
+		             ps.setInt(1, iTrackeeID);
+		             rs = ps.executeQuery();
+		             
+		             while(rs.next()){
+		            	 nameList.add(new User(rs.getInt(1), rs.getString(2)));
+		             }
+		            
+		             
+		         }catch(SQLException e){
+		             e.printStackTrace();
+		         }finally{
+		        	 con.closeCon();
+		         }
+		    	
+	    	
+	    	
+	    	return nameList;
+	    }
+	    
+	    //Retrieve Trackee List
+	    public ArrayList<User> getTrackeeList(String sUserID){
+	    	ArrayList<User> nameList = new ArrayList<User>();
+	    	String result = "", sQuery;
+	    	ResultSet rs;
+	    	PreparedStatement ps;
+	    	Integer iTrackeeID;
+	    	
+	    	iTrackeeID = Integer.parseInt(sUserID);
+	    	
+	    	
+	    	sQuery = "SELECT id, name FROM user WHERE id IN("
+	    			 + "SELECT trackeeId FROM trackers WHERE trackerId = ? AND trackstatus = 'pending')";
+	    	   try{
+		             ps = con.getConnection().prepareStatement(sQuery);
+		             ps.setInt(1, iTrackeeID);
+		             rs = ps.executeQuery();
+		             
+		             while(rs.next()){
+		            	 nameList.add(new User(rs.getInt(1), rs.getString(2)));
+		             }
+		            
+		             
+		         }catch(SQLException e){
+		             e.printStackTrace();
+		         }finally{
+		        	 con.closeCon();
+		         }
+		    	
+	    	
+	    	
+	    	return nameList;
+	    }
+	    
+	    
 	    
 	    
 	    
